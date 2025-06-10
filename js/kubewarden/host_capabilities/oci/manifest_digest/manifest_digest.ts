@@ -1,5 +1,5 @@
 import { OciManifestResponse } from "./types";
-import { HostCall } from "../..";
+import { HostCall } from "../../index";
 
 /**
  * Namespace for manifest digest operations.
@@ -25,19 +25,23 @@ export namespace ManifestDigest {
         let responsePayload: Uint8Array;
         try {
             responsePayload = HostCall.hostCall('kubewarden', 'oci', 'v1/manifest_digest', payload);
+            console.log(`Response payload:\n${JSON.stringify(responsePayload, null, 2)}`);
+            const str = new TextDecoder().decode(responsePayload);
+            return str
         } catch (err) {
+            console.log(`Host call failed`);
             throw err;
         }
 
-        let response: OciManifestResponse;
-        try {
-            const responseString = new TextDecoder().decode(responsePayload);
-            response = JSON.parse(responseString) as OciManifestResponse;
-        } catch (err) {
-            throw new Error(`cannot parse response: ${err}`);
-        }
+        // let response: OciManifestResponse;
+        // try {
+        //     const responseString = new TextDecoder().decode(responsePayload);
+        //     response = JSON.parse(responseString) as OciManifestResponse;
+        // } catch (err) {
+        //     throw new Error(`cannot parse response: ${err}`);
+        // }
 
-        return response.digest;
+        // return response.digest;
         
     }
 }

@@ -3,6 +3,7 @@ import type { Pod } from 'kubernetes-types/core/v1';
 import { Network } from './kubewarden/host_capabilities/network';
 import { Validation } from './kubewarden/validation';
 import { writeOutput } from './protocol';
+import { ManifestDigest } from './kubewarden/host_capabilities/oci/manifest_digest/manifest_digest';
 
 declare function policyAction(): string;
 
@@ -20,13 +21,17 @@ class PolicySetttings {
  * @returns {void}
  */
 function validate() {
+  const image = "docker.io/library/busybox:1.36";
+      const digest = ManifestDigest.getOCIManifestDigest(image);
+
   const validationRequest = Validation.readValidationRequest();
   const settings = validationRequest.settings as PolicySetttings;
 
   const ips = Network.dnsLookup('google.com').ips.join(', ');
   const annotations = {
-    ips: ips,
-  };
+    digest: digest,
+    ips: ips
+  }
 
   const pod = JSON.parse(JSON.stringify(validationRequest.request.object)) as Pod;
   const privileged =
