@@ -1,3 +1,4 @@
+// policy-sdk-js/js/kubewarden/host_capabilities/oci/manifest_digest/manifest_digest.ts
 import { OciManifestResponse } from "./types";
 import { HostCall } from "../../index";
 
@@ -8,40 +9,28 @@ export namespace ManifestDigest {
     /**
      * Computes the digest of the OCI object referenced by the image.
      * @param {string} image - The image to be verified (e.g.: `registry.testing.lan/busybox:1.0.0`)
-     * @returns A promise resolving to the image digest string
-     * @throws Error is JSON serialization fails or the host call returns an error
+     * @returns {string} The image digest string
+     * @throws {Error} If JSON serialization fails or the host call returns an error
      */
-
     export function getOCIManifestDigest(image: string): string {
-        // build request payload, e.g: `"ghcr.io/kubewarden/policies/pod-privileged:v0.1.10"`
+        // Serialize the image to JSON
         let payload: ArrayBuffer;
         try {
             payload = new TextEncoder().encode(JSON.stringify(image)).buffer;
         } catch (err) {
-            throw new Error(`cannot serialize image to JSON: ${err}`);
+            throw new Error(`Cannot serialize image to JSON: ${err}`);
         }
 
-        // perform host callback
-        let responsePayload: Uint8Array;
+        // Perform host call
+        const responsePayload = HostCall.hostCall('kubewarden', 'oci', 'v1/manifest_digest', payload);
+        let response: OciManifestResponse;
         try {
-            responsePayload = HostCall.hostCall('kubewarden', 'oci', 'v1/manifest_digest', payload);
-            console.log(`Response payload:\n${JSON.stringify(responsePayload, null, 2)}`);
-            const str = new TextDecoder().decode(responsePayload);
-            return str
+            const responseString = new TextDecoder().decode(responsePayload);
+            response = JSON.parse(responseString) as OciManifestResponse;
         } catch (err) {
-            console.log(`Host call failed`);
-            throw err;
+            throw new Error(`Cannot parse response: ${err}`);
         }
 
-        // let response: OciManifestResponse;
-        // try {
-        //     const responseString = new TextDecoder().decode(responsePayload);
-        //     response = JSON.parse(responseString) as OciManifestResponse;
-        // } catch (err) {
-        //     throw new Error(`cannot parse response: ${err}`);
-        // }
-
-        // return response.digest;
-        
+        return response.digest;
     }
 }
