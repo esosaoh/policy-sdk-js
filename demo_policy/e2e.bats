@@ -1,6 +1,8 @@
 #!/usr/bin/env bats
 
 @test "crypto verify cert - should successfully verify trusted certificate" {
+  sleep 10
+
   run kwctl run annotated-policy.wasm \
     -r ./test_data/no_privileged_containers.json \
     --settings-json '{"testScenario": "crypto-verify-cert-success"}' \
