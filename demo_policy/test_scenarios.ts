@@ -2,6 +2,7 @@ import type { Pod } from 'kubernetes-types/core/v1';
 
 import { Crypto } from '../js/kubewarden/host_capabilities/crypto/crypto';
 import type { Certificate } from '../js/kubewarden/host_capabilities/crypto/types';
+import { CertificateUtils } from '../js/kubewarden/host_capabilities/crypto/types';
 import { Kubernetes } from '../js/kubewarden/host_capabilities/kubernetes/kubernetes';
 import type { CanIRequest } from '../js/kubewarden/host_capabilities/kubernetes/types';
 import { Network } from '../js/kubewarden/host_capabilities/net/network';
@@ -547,10 +548,7 @@ ZLADjOXvUdmrRej3qXMCWVYCIClFFiL/JpzP9/ZCTzs1XjePGjIhMAgs1Up6yVg8
 kLQM
 -----END CERTIFICATE-----`;
 
-  const cert: Certificate = {
-    encoding: 'Pem',
-    data: Array.from(new TextEncoder().encode(certString)),
-  };
+  const cert: Certificate = CertificateUtils.fromString(certString, 'Pem');
 
   // Empty certificate chain - certificate is assumed trusted when chain is empty
   const certChain: Certificate[] = [];
@@ -579,10 +577,7 @@ kLQM
  * Handles crypto certificate verification failure scenario
  */
 export function handleCryptoVerifyCertFailure(): Validation.ValidationResponse {
-  const invalidCert: Certificate = {
-    encoding: 'Pem',
-    data: Array.from(new TextEncoder().encode('invalid certificate data')),
-  };
+  const invalidCert: Certificate = CertificateUtils.fromString('invalid certificate data', 'Pem');
 
   const certChain: Certificate[] = [];
   const notAfter = '2020-01-01T00:00:00Z'; // expired date

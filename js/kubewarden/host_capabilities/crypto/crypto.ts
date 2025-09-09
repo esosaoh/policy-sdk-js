@@ -2,7 +2,6 @@ import { HostCall } from '../';
 
 import type {
   Certificate,
-  CertificateVerificationRequest,
   CertificateVerificationResponse,
 } from './types';
 
@@ -25,11 +24,15 @@ export namespace Crypto {
     certChain: Certificate[],
     notAfter?: string,
   ): CertificateVerificationResponse {
-    const requestObj: CertificateVerificationRequest = {
+    const requestObj: any = {
       cert,
       cert_chain: certChain,
-      not_after: notAfter || '',
     };
+    
+    // Only include not_after if it's provided
+    if (notAfter !== undefined) {
+      requestObj.not_after = notAfter;
+    }
 
     let payload: ArrayBuffer;
     try {
