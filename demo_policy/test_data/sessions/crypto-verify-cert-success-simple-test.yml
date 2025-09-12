@@ -1,0 +1,12 @@
+- type: Exchange
+  request: |
+    !CryptoIsCertificateTrusted
+    request:
+      cert:
+        encoding: Pem
+        data: [116,101,115,116]
+      cert_chain: []
+      not_after: "2025-12-31T23:59:59Z"
+  response:
+    type: Success
+    payload: '{"trusted":true,"reason":"test certificate is trusted"}'

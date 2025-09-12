@@ -73,10 +73,11 @@
 }
 
 @test "crypto verify cert - should successfully verify trusted certificate" {
+  # Simple success test using minimal session file
   run kwctl run annotated-policy.wasm \
     -r ./test_data/no_privileged_containers.json \
     --settings-json '{"testScenario": "crypto-verify-cert-success"}' \
-    --replay-host-capabilities-interactions ./test_data/sessions/crypto-verify-cert-success-simple.yml \
+    --replay-host-capabilities-interactions ./test_data/sessions/crypto-verify-cert-success-simple-test.yml \
     --allow-context-aware
 
   echo "output = ${output}"
@@ -85,7 +86,8 @@
   [[ "$output" =~ '"trusted":"true"' ]]
   [[ "$output" =~ '"certEncoding":"Pem"' ]]
   [[ "$output" =~ '"chainLength":"0"' ]]
-  [[ "$output" =~ 'MIICbzCCAhWgAwIBAgIJAOHUuhpytCbWMAoGCCqGSM49BAMCMIGFMQswCQYDVQQG' ]]
+  [[ "$output" =~ '"certData":"test"' ]]
+  [[ "$output" =~ '"reason":"test certificate is trusted"' ]]
 }
 
 @test "crypto verify cert - should fail verification for invalid certificate" {

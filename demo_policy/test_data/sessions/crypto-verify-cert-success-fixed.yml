@@ -10,4 +10,3 @@
   response:
     type: Success
     payload: '{"trusted":true,"reason":"Certificate is trusted"}'
-

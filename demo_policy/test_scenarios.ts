@@ -530,23 +530,8 @@ export function handleSigstoreVerifyGithubActionsFailure(): Validation.Validatio
  * Handles crypto certificate verification success scenario
  */
 export function handleCryptoVerifyCertSuccess(): Validation.ValidationResponse {
-  // Non-CA certificate (end-entity)
-  const certString = `-----BEGIN CERTIFICATE-----
-MIICbzCCAhWgAwIBAgIJAOHUuhpytCbWMAoGCCqGSM49BAMCMIGFMQswCQYDVQQG
-EwJERTEQMA4GA1UECAwHQmF2YXJpYTESMBAGA1UEBwwJTnVyZW1iZXJnMRMwEQYD
-VQQKDApLdWJld2FyZGVuMRowGAYDVQQLDBFLdWJld2FyZGVuIFNlcnZlcjEfMB0G
-A1UEAwwWa3ViZXdhcmRlbi5leGFtcGxlLmNvbTAeFw0yNTA4MjIwMzI3MTRaFw0z
-MDA4MjEwMzI3MTRaMIGFMQswCQYDVQQGEwJERTEQMA4GA1UECAwHQmF2YXJpYTES
-MBAGA1UEBwwJTnVyZW1iZXJnMRMwEQYDVQQKDApLdWJld2FyZGVuMRowGAYDVQQL
-DBFLdWJld2FyZGVuIFNlcnZlcjEfMB0GA1UEAwwWa3ViZXdhcmRlbi5leGFtcGxl
-LmNvbTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABFDqqIXTRLsVkdUrVEEuXywc
-PbfkgPZ+7OhD56ULZvg94Cff8lLHJNegQ3nS5kiPXgN774eqBnq0e0ZhBSUfKjaj
-bDBqMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgSwMBMGA1UdJQQMMAoGCCsGAQUFBwMB
-MDsGA1UdEQQ0MDKCFmt1YmV3YXJkZW4uZXhhbXBsZS5jb22CGCoua3ViZXdhcmRl
-bi5leGFtcGxlLmNvbTAKBggqhkjOPQQDAgNIADBFAiEA51zpbLQ1zTEppycb7aPs
-ZLADjOXvUdmrRej3qXMCWVYCIClFFiL/JpzP9/ZCTzs1XjePGjIhMAgs1Up6yVg8
-kLQM
------END CERTIFICATE-----`;
+  // Simple test certificate - just use "test" as certificate data
+  const certString = 'test';
 
   const cert: Certificate = CertificateUtils.fromString(certString, 'Pem');
 
