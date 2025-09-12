@@ -558,13 +558,13 @@ kLQM
   const result = Crypto.verifyCert(cert, certChain, notAfter);
 
   return new Validation.ValidationResponse(
-    result.trusted,
-    result.trusted ? undefined : result.reason,
+    result.trusted || false,
+    result.trusted ? undefined : (result.reason || 'Certificate verification failed'),
     undefined,
     undefined,
     {
-      trusted: result.trusted.toString(),
-      reason: result.reason || '',
+      trusted: (result.trusted || false).toString(),
+      reason: result.reason || 'Certificate verification failed',
       certEncoding: cert.encoding,
       chainLength: certChain.length.toString(),
       notAfter,
@@ -589,7 +589,7 @@ export function handleCryptoVerifyCertFailure(): Validation.ValidationResponse {
     undefined,
     undefined,
     {
-      trusted: result.trusted.toString(),
+      trusted: (result.trusted || false).toString(),
       reason: result.reason || 'Expected failure',
       certEncoding: invalidCert.encoding,
       chainLength: certChain.length.toString(),

@@ -50,7 +50,18 @@ export namespace Crypto {
 
     try {
       const jsonString = new TextDecoder().decode(responsePayload);
-      return JSON.parse(jsonString) as CertificateVerificationResponse;
+      const response = JSON.parse(jsonString);
+      
+      // Check if the response has the expected structure
+      if (typeof response.trusted === 'boolean' && typeof response.reason === 'string') {
+        return response as CertificateVerificationResponse;
+      } else {
+        // If the response doesn't have the expected structure, return a default response
+        return {
+          trusted: false,
+          reason: `Unexpected response format: ${jsonString}`
+        };
+      }
     } catch (err) {
       throw new Error(`Failed to decode or parse certificate verification response: ${err}`);
     }
