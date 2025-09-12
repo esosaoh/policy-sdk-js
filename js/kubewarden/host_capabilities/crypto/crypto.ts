@@ -1,9 +1,6 @@
 import { HostCall } from '../';
 
-import type {
-  Certificate,
-  CertificateVerificationResponse,
-} from './types';
+import type { Certificate, CertificateVerificationResponse } from './types';
 
 /**
  * Crypto Host Capability
@@ -24,11 +21,15 @@ export namespace Crypto {
     certChain: Certificate[],
     notAfter?: string,
   ): CertificateVerificationResponse {
-    const requestObj: any = {
+    const requestObj: {
+      cert: Certificate;
+      cert_chain: Certificate[];
+      not_after?: string;
+    } = {
       cert,
       cert_chain: certChain,
     };
-    
+
     // Only include not_after if it's provided
     if (notAfter !== undefined) {
       requestObj.not_after = notAfter;
@@ -51,7 +52,7 @@ export namespace Crypto {
     try {
       const jsonString = new TextDecoder().decode(responsePayload);
       const response = JSON.parse(jsonString);
-      
+
       // Check if the response has the expected structure
       if (typeof response.trusted === 'boolean' && typeof response.reason === 'string') {
         return response as CertificateVerificationResponse;
@@ -59,19 +60,19 @@ export namespace Crypto {
         // Handle the actual host capability response format: {"True": "message"}
         return {
           trusted: true,
-          reason: response.True
+          reason: response.True,
         };
       } else if (response.False !== undefined) {
         // Handle the actual host capability response format: {"False": "message"}
         return {
           trusted: false,
-          reason: response.False
+          reason: response.False,
         };
       } else {
         // If the response doesn't have the expected structure, return a default response
         return {
           trusted: false,
-          reason: `Unexpected response format: ${jsonString}`
+          reason: `Unexpected response format: ${jsonString}`,
         };
       }
     } catch (err) {

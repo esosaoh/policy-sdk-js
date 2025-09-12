@@ -21,7 +21,7 @@ export interface Certificate {
  * @param not_after - RFC 3339 time format string, to check expiration against.
  *   If undefined, certificate is assumed never expired
  */
-interface CertificateVerificationRequest {
+export interface CertificateVerificationRequest {
   cert: Certificate;
   cert_chain?: Certificate[];
   not_after?: string;
