@@ -81,10 +81,11 @@
 
   echo "output = ${output}"
   [ "$status" -eq 0 ]
-  # Just check that the policy runs and returns a response - don't check for specific crypto behavior
-  [[ "$output" =~ '"uid":"1299d386-525b-4032-98ae-1949f69f9cfc"' ]]
+  [[ "$output" =~ '"allowed":true' ]]
+  [[ "$output" =~ '"trusted":"true"' ]]
   [[ "$output" =~ '"certEncoding":"Pem"' ]]
   [[ "$output" =~ '"chainLength":"0"' ]]
+  [[ "$output" =~ 'MIICbzCCAhWgAwIBAgIJAOHUuhpytCbWMAoGCCqGSM49BAMCMIGFMQswCQYDVQQG' ]]
 }
 
 @test "crypto verify cert - should fail verification for invalid certificate" {
