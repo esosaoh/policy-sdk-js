@@ -55,6 +55,18 @@ export namespace Crypto {
       // Check if the response has the expected structure
       if (typeof response.trusted === 'boolean' && typeof response.reason === 'string') {
         return response as CertificateVerificationResponse;
+      } else if (response.True !== undefined) {
+        // Handle the actual host capability response format: {"True": "message"}
+        return {
+          trusted: true,
+          reason: response.True
+        };
+      } else if (response.False !== undefined) {
+        // Handle the actual host capability response format: {"False": "message"}
+        return {
+          trusted: false,
+          reason: response.False
+        };
       } else {
         // If the response doesn't have the expected structure, return a default response
         return {

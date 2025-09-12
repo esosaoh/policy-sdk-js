@@ -9,4 +9,4 @@
       not_after: "2025-12-31T23:59:59Z"
   response:
     type: Success
-    payload: '{"trusted":true,"reason":""}'
+    payload: '{"True":"Certificate is trusted by the provided cert chain"}'
