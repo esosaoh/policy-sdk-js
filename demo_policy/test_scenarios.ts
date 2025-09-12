@@ -530,8 +530,8 @@ export function handleSigstoreVerifyGithubActionsFailure(): Validation.Validatio
  * Handles crypto certificate verification success scenario
  */
 export function handleCryptoVerifyCertSuccess(): Validation.ValidationResponse {
-  // Simple test certificate - just use "test" as certificate data
-  const certString = 'test';
+  // Minimal valid PEM certificate format
+  const certString = '-----BEGIN CERTIFICATE-----\ntest\n-----END CERTIFICATE-----';
 
   const cert: Certificate = CertificateUtils.fromString(certString, 'Pem');
 

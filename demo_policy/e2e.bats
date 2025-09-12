@@ -86,7 +86,7 @@
   [[ "$output" =~ '"trusted":"true"' ]]
   [[ "$output" =~ '"certEncoding":"Pem"' ]]
   [[ "$output" =~ '"chainLength":"0"' ]]
-  [[ "$output" =~ '"certData":"test"' ]]
+  [[ "$output" =~ '"certData":"-----BEGIN CERTIFICATE-----' ]]
   [[ "$output" =~ '"reason":"test certificate is trusted"' ]]
 }
 
