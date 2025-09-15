@@ -77,7 +77,7 @@
   run kwctl run annotated-policy.wasm \
     -r ./test_data/no_privileged_containers.json \
     --settings-json '{"testScenario": "crypto-verify-cert-success"}' \
-    --replay-host-capabilities-interactions ./test_data/sessions/crypto-verify-cert-success-real.yml \
+    --replay-host-capabilities-interactions ./test_data/sessions/crypto-verify-cert-success.yml \
     --allow-context-aware
 
   echo "output = ${output}"
