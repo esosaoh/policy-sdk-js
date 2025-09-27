@@ -123,4 +123,6 @@ jobs:
           npm run build
 
       - name: Build plugin and policy
-        run: make all
+        run: |
+          rustup add target wasm32-wasip2
+          make all
