@@ -1,0 +1,9 @@
+package kubewarden:javy-plugin@1.0.0;
+
+world kubewarden-javy-plugin-v1 {
+    export compile-src: func(src: list<u8>) -> result<list<u8>, string>;
+    export initialize-runtime: func();
+    export invoke: func(bytecode: list<u8>, function: option<string>);
+
+    import call: func(bd-ptr: u32, bd-len: u32, ns-ptr: u32, ns-len: u32, op-ptr: u32, op-len: u32, ptr: u32, len: u32) -> u32;
+}

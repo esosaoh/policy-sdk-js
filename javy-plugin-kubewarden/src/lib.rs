@@ -1,75 +1,67 @@
-use javy_plugin_api::javy::quickjs::{prelude::Func, Error, Object};
-use javy_plugin_api::{import_namespace, Config};
+use javy_plugin_api::{
+    javy::{quickjs::prelude::Func, Runtime},
+    javy_plugin, Config,
+};
 
-import_namespace!("kubewarden");
+wit_bindgen::generate!({ world: "kubewarden-javy-plugin-v1", generate_all });
 
-#[link(wasm_import_module = "host")]
-extern "C" {
-    /// The host's exported __host_call function.
-    pub(crate) fn call(
-        bd_ptr: *const u8,
-        bd_len: usize,
-        ns_ptr: *const u8,
-        ns_len: usize,
-        op_ptr: *const u8,
-        op_len: usize,
-        ptr: *const u8,
-        len: usize,
-    ) -> usize;
-}
+// The call function is imported directly via WIT
 
-#[export_name = "initialize_runtime"]
-pub extern "C" fn initialize_runtime() {
+fn config() -> Config {
     let mut config = Config::default();
     config.text_encoding(true).javy_stream_io(true);
+    config
+}
 
-    javy_plugin_api::initialize_runtime(config, |runtime| {
-        runtime
-            .context()
-            .with(|ctx| {
-                ctx.globals().set(
-                    "policyAction",
-                    Func::from(|| {
-                        let args = std::env::args().collect::<Vec<String>>();
-                        if args.len() != 2 {
-                            // TODO: move to Error::UserData when javy upgrades to latest version of rquickjs
-                            return Err(Error::Unknown);
-                        }
-                        Ok(args[1].clone())
-                    }),
-                )
-            })
-            .unwrap();
-        runtime
-            .context()
-            .with(|ctx| {
-                ctx.globals().set(
-                    "__hostCall",
-                    Func::from(|binding: String, ns: String, op: String, msg: Object| {
-                        let msg = msg
-                            .as_array_buffer()
-                            .and_then(|ab| ab.as_bytes())
-                            .ok_or(Error::Unknown)?; // TODO: move to Error::UserData when javy upgrades to latest version of rquickjs
-
-                        let successful = unsafe {
-                            call(
-                                binding.as_ptr(),
-                                binding.len(),
-                                ns.as_ptr(),
-                                ns.len(),
-                                op.as_ptr(),
-                                op.len(),
-                                msg.as_ptr(),
-                                msg.len(),
-                            )
-                        };
-
-                        Ok::<bool, Error>(successful == 0)
-                    }),
-                )
-            })
-            .unwrap();
-        runtime
+fn modify_runtime(runtime: Runtime) -> Runtime {
+    runtime.context().with(|ctx| {
+        ctx.globals().set(
+            "policyAction",
+            Func::from(|| {
+                let args = std::env::args().collect::<Vec<String>>();
+                if args.len() != 2 {
+                    // TODO: move to Error::UserData when javy upgrades to latest version of rquickjs
+                    return Err(javy_plugin_api::javy::quickjs::Error::Unknown);
+                }
+                Ok(args[1].clone())
+            }),
+        )
     })
     .unwrap();
+    
+    runtime.context().with(|ctx| {
+        ctx.globals().set(
+            "__hostCall",
+            Func::from(|binding: String, ns: String, op: String, msg: javy_plugin_api::javy::quickjs::Object| {
+                let msg = msg
+                    .as_array_buffer()
+                    .and_then(|ab| ab.as_bytes())
+                    .ok_or(javy_plugin_api::javy::quickjs::Error::Unknown)?; // TODO: move to Error::UserData when javy upgrades to latest version of rquickjs
+
+                let successful = crate::call(
+                    binding.as_ptr() as u32,
+                    binding.len() as u32,
+                    ns.as_ptr() as u32,
+                    ns.len() as u32,
+                    op.as_ptr() as u32,
+                    op.len() as u32,
+                    msg.as_ptr() as u32,
+                    msg.len() as u32,
+                );
+
+                Ok::<bool, javy_plugin_api::javy::quickjs::Error>(successful == 0)
+            }),
+        )
+    })
+    .unwrap();
+    
+    runtime
 }
+
+struct Component;
+
+// Dynamically linked modules will use `kubewarden-javy-plugin-v1` as the import
+// namespace.
+javy_plugin!("kubewarden-javy-plugin-v1", Component, config, modify_runtime);
+
+export!(Component);
