@@ -67,8 +67,10 @@ jobs:
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: wasm32-wasip2
+      - name: Install wasm32-wasip2 target
+        run: |
+          rustup target add wasm32-wasip2 --toolchain stable
+          rustup target list --installed
 
       - name: Install wasm-tools
         run: cargo install wasm-tools
