@@ -18,7 +18,7 @@ jobs:
           target: wasm32-wasip2
           cache: false
       - name: Install wasm-tools
-        run: cargo install wasm-tools
+        run: cargo install wasm-tools --version 1.220.0
       - name: Install javy
         shell: bash
         run: |
