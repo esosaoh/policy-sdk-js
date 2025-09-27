@@ -14,7 +14,7 @@ jobs:
       - name: Install Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: stable
+          toolchain: 1.82.0
           target: wasm32-wasip2
           cache: false
       - name: Install wasm-tools
