@@ -18,7 +18,24 @@ jobs:
           target: wasm32-wasip2
           cache: false
       - name: Install wasm-tools
-        run: cargo install wasm-tools --version 1.220.0
+        shell: bash
+        run: |
+          #!/bin/bash
+          set -e
+
+          INSTALL_DIR=$HOME/.wasm-tools
+          VERSION="1.220.0"
+
+          mkdir -p $INSTALL_DIR
+          curl -sL https://github.com/bytecodealliance/wasm-tools/releases/download/v${VERSION}/wasm-tools-${VERSION}-x86_64-linux.tar.gz -o $INSTALL_DIR/wasm-tools.tar.gz
+          tar -xzf $INSTALL_DIR/wasm-tools.tar.gz -C $INSTALL_DIR
+          mv $INSTALL_DIR/wasm-tools-${VERSION}-x86_64-linux/wasm-tools $INSTALL_DIR/wasm-tools
+          rm -rf $INSTALL_DIR/wasm-tools.tar.gz $INSTALL_DIR/wasm-tools-${VERSION}-x86_64-linux
+
+          chmod 755 $INSTALL_DIR/wasm-tools
+          echo $INSTALL_DIR >> $GITHUB_PATH
+
+          $INSTALL_DIR/wasm-tools --version
       - name: Install javy
         shell: bash
         run: |
