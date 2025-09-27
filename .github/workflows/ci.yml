@@ -124,5 +124,5 @@ jobs:
 
       - name: Build plugin and policy
         run: |
-          rustup add target wasm32-wasip2
+          rustup target add wasm32-wasip2
           make all
