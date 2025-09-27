@@ -65,12 +65,13 @@ jobs:
       - name: Install dependencies
         uses: kubewarden/github-actions/policy-gh-action-dependencies@5e22c63afd22d04a802a7a0463f66ffda6c3c71a # v4.5.7
 
-      - name: Install Rust
+      - name: Override Rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: 1.82.0
           target: wasm32-wasip2
           cache: false
+          override: true
 
       - name: Install wasm-tools
         shell: bash
