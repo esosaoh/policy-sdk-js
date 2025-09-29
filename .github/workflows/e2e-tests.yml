@@ -9,15 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      - name: Install dependencies
-        uses: kubewarden/github-actions/policy-gh-action-dependencies@5e22c63afd22d04a802a7a0463f66ffda6c3c71a # v4.5.7
-      - name: Override Rust toolchain
+      - name: Install Rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: 1.82.0
           target: wasm32-wasip2
           cache: false
-          override: true
+      
+      - name: Install kwctl
+        run: |
+          curl -L https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-linux-x86_64.tar.gz | tar xvz
+          sudo mv kwctl /usr/local/bin/
       - name: Install wasm-tools
         shell: bash
         run: |
